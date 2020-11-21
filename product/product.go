@@ -3,8 +3,8 @@ package main
 import "strconv"
 
 type Product struct{
-	Id int
-	Name string
+	Id int `json:"id"`
+	Name string `json:"name"`
 }
 
 func newProduct(id int, name string)*Product{

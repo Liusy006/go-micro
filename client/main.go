@@ -8,28 +8,33 @@ import (
 	"github.com/micro/go-micro/client/selector"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/registry/etcd"
+	my_http "github.com/micro/go-plugins/client/http"
+	"go-micro/models"
 	"io/ioutil"
 	"log"
 	"net/http"
-	my_http "github.com/micro/go-plugins/client/http"
 	"time"
 )
 
-func callApi2( s selector.Selector)  {
+func callApi2( service, endpoit string, s selector.Selector)  {
 	myclient := my_http.NewClient(
 		client.Selector(s),
 		client.ContentType("application/json"),
 		)
 
-	req:= myclient.NewRequest("productservice", "/v1/product", nil)
 
-	var rsp map[string]interface{}
+	req:= myclient.NewRequest(service,
+		endpoit,
+		models.ProductRequest{Size:3},
+		)
+
+	var rsp models.ProductResponse
 	err := myclient.Call(context.Background(), req,  &rsp)
 	if err != nil{
 		log.Fatal("****", err)
 	}
 
-	fmt.Println(rsp["data"])
+	fmt.Println(rsp.GetData())
 }
 
 func callApi( addr, path, method string, body []byte)(string, error){
@@ -60,7 +65,7 @@ func main(){
 		selector.SetStrategy(selector.RoundRobin),
 		)
 
-	callApi2( s)
+	callApi2( "productservice", "/v1/product", s)
 	time.Sleep(time.Second)
 
 	/*for{
