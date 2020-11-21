@@ -11,8 +11,12 @@ func main(){
 	ginRouter := gin.Default()
 	v1Group := ginRouter.Group("v1")
 	{
-		v1Group.Handle("GET", "/product", func(context *gin.Context) {
-			context.JSON(200, newProductList(5))
+		v1Group.Handle("POST", "/product", func(context *gin.Context) {
+			context.JSON(200,
+				gin.H{
+					"data": newProductList(5),
+				},
+				)
 		})
 	}
 
